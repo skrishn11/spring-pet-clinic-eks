@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/name: spring-petclinic-eks
+  name: spring-petclinic-eks-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: spring-petclinic-eks
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: spring-petclinic-eks
+        app.kubernetes.io/part-of: spring-petclinic-eks
+        tanzu.app.live.view: "true"
+        tanzu.app.live.view.application.name: spring-petclinic-eks
+    spec:
+      containers:
+      - image: spring-petclinic-eks:2.4.2
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          httpGet:
+            path: /actuator/health/liveness
+            port: 8080
+          initialDelaySeconds: 15
+        name: app
+        ports:
+        - containerPort: 8080
+        readinessProbe:
+          httpGet:
+            path: /actuator/health/readiness
+            port: 8080
+          initialDelaySeconds: 15
